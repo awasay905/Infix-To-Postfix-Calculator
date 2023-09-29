@@ -1,6 +1,6 @@
 import MyStack.MyStack;
 
-import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class ExpressionEvaluator {
@@ -8,15 +8,76 @@ public class ExpressionEvaluator {
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        System.out.println("Enter the expression with spaces");
-        String infix = input.nextLine();
-        String postfix = infixToPostfix(infix);
-        double result = postfixToAnswer(postfix);
-        System.out.println("Given Infix Expression was : " + infix);
-        System.out.println("Its postfix form is        : " + postfix);
-        System.out.println("Evaluated answer is        : " + result );
+        System.out.print("""
+                |--------------------------------------------------------|
+                |------------WELCOME TO EXPRESSION EVALUATOR-------------|
+                |---------------MADE BY ABDUL WASAY IMRAN----------------|
+                |--------------------------------------------------------| 
+                
+                Press (1): For converting infix expression to postfix
+                Press (2): For evaluating postfix expression
+                Press (3): For converting AND evaluating infix expressions
+                Press (4): To exit
+                            
+                Response: 
+                """);
+        int choice = -1;
+        while (choice != 4) {
+            try {
+                choice = input.nextInt();
+            } catch (InputMismatchException e){
+                System.out.print("Opps! Looks like you made a wrong choice. Try again: ");
+            }
+
+            switch (choice){
+                case 1 -> calculateInfixToPostfix();
+                case 2 -> evaluatePostfix();
+                case 3 -> calculateAndEvaluate();
+                case 4 -> exit();
+            }
+            if (choice != 4) {
+                System.out.println("""
+                        Do you want to do something more?
+                                        
+                        Press (1): For converting infix expression to postfix
+                        Press (2): For evaluating postfix expression
+                        Press (3): For converting AND evaluating infix expressions
+                        Press (4): To exit""");
+            }
+        }
     }
 
+    public static void exit(){
+        System.out.println("Thank you for using. bye");
+    }
+    public static void calculateAndEvaluate(){
+        Scanner input = new Scanner(System.in);
+        System.out.println("Infix Evaluation: ");
+        System.out.print("Enter the infix expression WITH spaces around everything\n");
+        System.out.print("Expression: ");
+        String exp = input.nextLine();
+        System.out.println("The input string is : " + exp);
+        System.out.println("The postfix expression is : " + infixToPostfix(exp));
+        System.out.println("The evaluated answer is : " + postfixToAnswer(infixToPostfix(exp)));
+    }
+    public static void evaluatePostfix(){
+        Scanner input = new Scanner(System.in);
+        System.out.println("Evaluate Postfix Expression: ");
+        System.out.print("Enter the postfix expression WITH spaces around everything\n");
+        System.out.print("Expression: ");
+        String exp = input.nextLine();
+        System.out.println("The input string is : " + exp);
+        System.out.println("The evaluated answer is : " + postfixToAnswer(exp));
+    }
+    public static void calculateInfixToPostfix(){
+        Scanner input = new Scanner(System.in);
+        System.out.println("Infix to postfix conversion: ");
+        System.out.print("Enter the infix expression WITH spaces around everything\n");
+        System.out.print("Expression: ");
+        String exp = input.nextLine();
+        System.out.println("The input string is : " + exp);
+        System.out.println("The postfix expression is : " + infixToPostfix(exp));
+    }
     public static boolean isDigit(char c) {
         return (c >= '0' && c <= '9');
     }
@@ -58,11 +119,11 @@ public class ExpressionEvaluator {
                         }
                         operators.pop();
                     } else {
-                        //now we compare the priority
                         if ((operator == '+' || operator == '-') && (operators.peek() == '/' || operators.peek() == '*')){
                             while (!operators.isEmpty() && (operators.peek() == '/' || operators.peek() == '*')){
                                 s.append(operators.pop()).append(" ");
                             }
+                            operators.push(operator);
                         }
                         else {
                             operators.push(operator);
@@ -76,7 +137,7 @@ public class ExpressionEvaluator {
             s.append(operators.pop()).append(" ");
         }
 
-        return s.toString();
+        return s.toString().trim();
     }
 
     public static double postfixToAnswer(String expression){
